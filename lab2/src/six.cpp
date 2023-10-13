@@ -74,6 +74,7 @@ void Six::more0(int n) {
         array[i + this->_size] = '0';
     }
     this->_size = n + this->_size;
+    delete[] arr;
     this->arr = array;
 }
 
@@ -95,6 +96,7 @@ void Six::less0() {
             array[i] = arr[i];
         }
         _size -= t;
+        delete[] arr;
         arr = array;
     }
 }
