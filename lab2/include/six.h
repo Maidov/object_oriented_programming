@@ -15,9 +15,6 @@ public:
     virtual ~Six() noexcept;
 
     int size();
-    void convertToString(std::string & s);
-    void addZeros(int n);
-    void removeZeros();
 
     Six& operator=(const Six& other);
     bool operator==(const Six& other) const;
@@ -34,6 +31,10 @@ public:
 
 
 private:
+    void toString(std::string & s);
+    void more0(int n);
+    void less0();
+    
     size_t _size;
     unsigned char *arr;
 };
