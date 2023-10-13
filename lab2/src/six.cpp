@@ -4,12 +4,12 @@ Six::Six(): arr(nullptr), _size(0) {}
 
 Six::Six(const size_t &n, unsigned char t)  // Fill constructor
 {
-    if (t >= '6' || t < '0') throw std::underflow_error("invalid symbol");
+    if (t >= '6' || t < '0') throw std::underflow_error("Invalid symbol");
     arr = new unsigned char[n];
     for (size_t i = 0; i < n; ++i)
         arr[n - i - 1] = t;
     _size = n;
-    removeZeros();
+    less0();
 }
 
 Six::Six(const std::initializer_list<unsigned char> &t)  // Initializer list constructor
@@ -17,11 +17,11 @@ Six::Six(const std::initializer_list<unsigned char> &t)  // Initializer list con
     arr = new unsigned char[t.size()];
     size_t i{t.size() - 1};
     for (auto &c : t) { 
-        if (c >= '6' || c < '0') throw std::underflow_error("invalid symbol");
+        if (c >= '6' || c < '0') throw std::underflow_error("Invalid symbol");
         arr[i--] = c;
     }
     _size = t.size();
-    removeZeros();
+    less0();
 }
 
 Six::Six(const std::string &t)  // Copy string constructor
@@ -29,11 +29,11 @@ Six::Six(const std::string &t)  // Copy string constructor
     arr = new unsigned char[t.size()];
     _size  = t.size();
 
-    for(size_t i{0}; i < _size; ++i) {
-        if (t[i] >= '6' || t[i] < '0') throw std::underflow_error("invalid symbol");
+    for(size_t i = 0; i < _size; ++i) {
+        if (t[i] >= '6' || t[i] < '0') throw std::underflow_error("Invalid symbol");
         arr[_size - i - 1] = t[i];
     }
-    removeZeros();
+    less0();
 }
 
 Six::Six(const Six &other)  // Copy constructor
@@ -41,8 +41,8 @@ Six::Six(const Six &other)  // Copy constructor
     _size  = other._size;
     arr = new unsigned char[_size];
 
-    for(size_t i{0}; i < _size; ++i) arr[i] = other.arr[i];
-    removeZeros();
+    for(size_t i = 0; i < _size; ++i) arr[i] = other.arr[i];
+    less0();
 }
 
 Six::Six(Six &&other) noexcept  // Move constructor
@@ -52,20 +52,20 @@ Six::Six(Six &&other) noexcept  // Move constructor
 
     other._size = 0;
     other.arr = nullptr;
-    removeZeros();
+    less0();
 }
 
 int Six::size() {
     return _size;
 }
 
-void Six::convertToString(std::string& s) {
+void Six::toString(std::string& s) {
     for (size_t i = 0; i < _size; ++i) {
         s = static_cast<char>(arr[i]) + s;
     }
 }
 
-void Six::addZeros(int n) {
+void Six::more0(int n) {
     unsigned char * array = new unsigned char[n + this->_size];
     for (size_t i = 0; i < this->_size; ++i) {
         array[i] = this->arr[i];
@@ -77,7 +77,7 @@ void Six::addZeros(int n) {
     this->arr = array;
 }
 
-void Six::removeZeros() {
+void Six::less0() {
     int t = -1;
     for (size_t i = 0; i < _size; ++i) {
         if (arr[_size - i - 1] != '0') {
@@ -108,8 +108,8 @@ Six& Six::operator=(const Six& other)
     _size  = other._size;
     arr = new unsigned char[_size];
 
-    for(size_t i{0}; i < _size; ++i) arr[i] = other.arr[i];
-    removeZeros();
+    for(size_t i = 0; i < _size; ++i) arr[i] = other.arr[i];
+    less0();
 
     return *this;
 }
@@ -156,7 +156,7 @@ Six Six::operator+(const Six& other)
     if (this->_size > other._size) new_size = s1 + 1;
     else new_size = other._size + 1;
     Six res(1, '0');
-    res.addZeros(new_size - 1);
+    res.more0(new_size - 1);
     bool shift = false;
     int finDigit;
     for (size_t i = 0; i < new_size - 1; ++i) {
@@ -185,7 +185,7 @@ Six Six::operator+(const Six& other)
     if (shift) {
         res.arr[new_size - 1] = '1';
     }
-    res.removeZeros();
+    res.less0();
 
     return res;
 }
@@ -213,7 +213,7 @@ Six Six::operator-(const Six& other) const
             res.arr[i] = (res.arr[i] - other.arr[i]) + '0';
         }
     }
-    res.removeZeros();
+    res.less0();
     return res;
 }
 
@@ -247,10 +247,10 @@ std::istream& operator >> (std::istream& in, Six& _this) //in overload
     _this._size = input.size();
     for (size_t i = 0; i < input.size(); i++)
     {
-        if (input[i] >= '6' || input[i] < '0') throw std::underflow_error("invalid symbol");
+        if (input[i] >= '6' || input[i] < '0') throw std::underflow_error("Invalid symbol");
         _this.arr[input.size() - i - 1] = input[i];
     }
-    _this.removeZeros();
+    _this.less0();
     return in;
 }
 
