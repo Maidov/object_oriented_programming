@@ -108,6 +108,7 @@ Six& Six::operator=(const Six& other)
     }
     
     _size  = other._size;
+    delete[] arr;
     arr = new unsigned char[_size];
 
     for(size_t i = 0; i < _size; ++i) arr[i] = other.arr[i];
