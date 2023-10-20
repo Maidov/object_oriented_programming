@@ -13,7 +13,7 @@ bool point::operator!=(const point& other) const
     return true;
 }
 
-std::ostream& operator<<(std::ostream& out, const point& _this) //out overload
+std::ostream& operator<<(std::ostream& out, const point& _this)
 {
     out << std::left << std::setw(12) <<_this.x << " | "  << std::setw(12) << _this.y << std::endl;
     return out;

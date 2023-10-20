@@ -38,18 +38,18 @@ int main(){
 
         Rhombus B{a2, a1, a0, a3};
         
-        cout << "\n\nBEFORE\n";
-        cout << C;
-        cout << D;
-        cout << (C == D);
-        C = move(D);
+        FigureCollection array;
+        array.pushBack(&B);
+        array.pushBack(&D);
+        array.pushBack(&C);
+        array.pushBack(&A);
 
-        cout << "\n\nAFTER\n";
-        cout << C;
-        //cout << D;
-        //cout << (C == D);
-
-        cout << "GREAT VERTICAL PRINT\n";
+        cout << "\n\nGREAT VERTICAL PRINT\n\n";
+        cout << array;
+        cout << "\n\nGREAT AFTER PRINT\n\n";
+        array.remove(1);
+        cout << "\n\nGO\n\n";
+        cout << array;
 
     } catch(std::exception &ex){
         cerr << "exception: " << ex.what() << std::endl;

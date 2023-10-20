@@ -7,21 +7,21 @@ FigureCollection::FigureCollection() : size(0), capacity(3) {
 
 FigureCollection::~FigureCollection() {
     delete[] figures;
+    figures = nullptr;
 }
 
 void FigureCollection::pushBack(Figure* figure)  {
-        if (size >= capacity) {
-            // Если массив полон, увеличиваем его размер
-            capacity *= 2;
-            Figure** newCollection = new Figure*[capacity];
-            for (int i = 0; i < size; i++) {
-                newCollection[i] = this->figures[i];
-            }
-            delete[] figures;
-            this->figures = newCollection;
+    if (size >= capacity) {
+        capacity *= 2;
+        Figure** newCollection = new Figure*[capacity];
+        for (int i = 0; i < size; i++) {
+            newCollection[i] = this->figures[i];
         }
-        this->figures[size++] = figure;
+        delete[] figures;
+        this->figures = newCollection;
     }
+    this->figures[size++] = figure;
+}
 
 std::ostream& operator<<(std::ostream& out, const FigureCollection& _this) //out overload
 {
@@ -37,7 +37,6 @@ void FigureCollection::displayGCenters(){
         std::cout << "\n   V " << this->figures[i]->getTag() << " CENTER V" << "\n" ;
         std::cout << figures[i]->getGCenter();
     }
-    
 }
 
 void FigureCollection::displayAreas(){
@@ -56,11 +55,37 @@ double FigureCollection::getAllArea(){
     return result;
 }
 
-
 Figure* FigureCollection::get(int index) {
     if (index >= 0 && index < size) {
         return figures[index];
     } else {
         throw std::underflow_error("Index out of range");
+    }
+}
+
+void FigureCollection::remove(int index) {
+    if (index < 0 || index >= size) {
+        throw std::underflow_error("Index out of range");
+        return;
+    }
+
+    figures[index] = NULL; // Освобождаем память, выделенную под фигуру по индексу
+    for (int i = index; i < size - 1; i++) {
+        figures[i] = figures[i + 1];
+    }
+    size--;
+
+    if (size < capacity / 2 && size > 0) {
+        // Если размер стал значительно меньше, чем вместимость, можно уменьшить capacity.
+        // В данном случае, я уменьшу capacity до ближайшей меньшей степени двойки.
+        while (capacity / 2 >= size) {
+            capacity /= 2;
+        }
+        Figure** newCollection = new Figure*[capacity];
+        for (int i = 0; i < size; i++) {
+            newCollection[i] = figures[i];
+        }
+        delete[] figures;
+        figures = newCollection;
     }
 }
