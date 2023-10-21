@@ -27,7 +27,7 @@
         |------------| PENTAGON |---------------|   
         |---------------------------------------|-----
         |  constructor from all dots            |   +
-        |----|  exeptions                       |   +   -wrong radiuuus?
+        |----|  exeptions                       |   + 
         |  size                                 |   +
         |  getTag                               |   +
         |  getGCenter                           |   +
