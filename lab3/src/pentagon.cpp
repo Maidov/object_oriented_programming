@@ -5,7 +5,7 @@ Pentagon::Pentagon() : Figure(5)
     tag = "PENTAGON";
 }
 
-Pentagon::Pentagon(point x, point y) : Figure(x, 5)
+Pentagon::Pentagon(point &x, point &y) : Figure(x, 5)
 {
     tag = "PENTAGON";
     constructFig(y, 5);
@@ -18,6 +18,14 @@ Pentagon::Pentagon(const std::initializer_list<point> &dots) : Figure(dots, 5)
     check();
 };
 
+Pentagon& Pentagon::operator=(Pentagon& other)
+{
+    if (this != &other) {
+        Figure::operator=(other);
+    }
+    return *this;
+}
+
 Pentagon& Pentagon::operator=(Pentagon&& other)
 {
     if (this != &other) {
@@ -28,5 +36,5 @@ Pentagon& Pentagon::operator=(Pentagon&& other)
 
 void Pentagon::check() const
 {
-    if (!(Figure::trueFigCheck(this->size()))) throw std::underflow_error("Dumb ass. This is not PENTAGON");
+    if ((!(Figure::trueFigCheck(this->size())) || (this->calcArea() == 0))) throw std::underflow_error("This is not PENTAGON");
 }

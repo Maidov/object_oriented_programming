@@ -9,6 +9,7 @@ public:
     Hexagon();
     Hexagon(point x, point y);
     Hexagon(const std::initializer_list<point> &dots);
+    Hexagon& operator=(Hexagon& other);
     Hexagon& operator=(Hexagon&& other);
     
 protected:

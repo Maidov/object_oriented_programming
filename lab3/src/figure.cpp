@@ -12,10 +12,10 @@ Figure::Figure(int n)
 
 Figure::Figure(point &center, int n)
 {
-    this->_size = n;
+    _center = center;
+    _size = n;
     arr = new point[n];
 }
-
 
 Figure::Figure(const std::initializer_list<point> &dots, int n)
 {
@@ -26,7 +26,12 @@ Figure::Figure(const std::initializer_list<point> &dots, int n)
 
     for (auto &c : dots) { 
         arr[i++] = c;
+        _center.x += arr[i - 1].x;
+        _center.y += arr[i - 1].y;
     }
+
+    _center.x /= n;
+    _center.y /= n;
 }
 
 const point* Figure::getDots() const
@@ -41,9 +46,11 @@ Figure::~Figure() noexcept
     arr = nullptr;
 }
 
+point Figure::getGCenter() const{
+    return _center;
+}
 
-
-point Figure::getGCenter() const
+void Figure::refreshCenter()
 {
     point center{0, 0};
 
@@ -54,8 +61,9 @@ point Figure::getGCenter() const
     }
     center.x /= _size;
     center.x /= _size;
-    return center;
+    _center = center;
 }
+
 
 const int Figure::size() const
 {
@@ -69,27 +77,24 @@ const std::string Figure::getTag() const
 
 void Figure::constructFig(point &dot, int n)
 {
-    point center = getGCenter();
     double angle = degrE2Rad(360/n);
-    double alfa = atan((center.y - dot.y)/(center.x - dot.x));
-    double r = distance(center, dot);
-
+    double alfa = atan((_center.y - dot.y)/(_center.x - dot.x));
+    double r = distance(_center, dot);
     for (size_t i = 0; i < n; i++)
     {
-        arr[i].x = center.x + (r * cos(alfa + (angle * i)));
-        arr[i].y = center.y + (r * sin(alfa + (angle * i)));
+        arr[i].x = _center.x + (r * cos(alfa + (angle * i)));
+        arr[i].y = _center.y + (r * sin(alfa + (angle * i)));
     }
 }
 
 bool Figure::trueFigCheck(int n) const
 {
-    point center = getGCenter();
     double setDis = distance(arr[0], arr[n - 1]);
-    double setR = distance(center, arr[_size-1]);
+    double setR = distance(_center, arr[_size-1]);
     for (size_t i = 0; i < (_size - 1); i++)
     {
         double dis = distance(arr[i], arr[i+1]);
-        double r = distance(center ,arr[i]);
+        double r = distance(_center ,arr[i]);
         if (!(dbEqual(r, setR))) return false;
         if (!(dbEqual(dis, setDis))) return false;
     }
@@ -114,7 +119,7 @@ bool Figure::dbEqual(double a, double b) const
 
 double Figure::calcArea() const
 {
-    return (_size * pow(distance(arr[0], arr[1]), 2)) / (4 * (tan(M_PI / _size)));
+    return _size * pow(distance(_center, arr[0]), 2) * sin((2*M_PI)/_size) * 0.5;
 }
 
 Figure::operator double()
@@ -129,9 +134,8 @@ bool Figure::operator==(const Figure& other) const
     return true;
 }
 
-Figure& Figure::operator=(const Figure& other)
+Figure& Figure::operator=(Figure& other)
 {
-    if (this->tag != other.getTag()) throw std::underflow_error("Trying to copy different figures");
     if (*this == other) {
         return *this;
     }    
@@ -140,6 +144,7 @@ Figure& Figure::operator=(const Figure& other)
     arr = new point[_size];
 
     for(size_t i{0}; i < _size; ++i) arr[i] = other.arr[i];
+    refreshCenter();
     return *this;
 }
 
@@ -147,11 +152,12 @@ Figure& Figure::operator=(const Figure& other)
 Figure& Figure::operator=(Figure&& other) noexcept
 {
     if (this->tag != other.getTag());
-    if (this != &other) {
+    if (!(this == &other)) {
         delete[] arr; // Освобождаем собственные ресурсы
         arr = other.arr; // Перемещаем ресурсы из other
         other.arr = nullptr;
     }
+    refreshCenter();
     return *this;
 }
 

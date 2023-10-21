@@ -6,10 +6,6 @@
 class Figure
 { 
 public:
-    Figure();
-    Figure(int n);
-    Figure(point &center, int n);
-    Figure(const std::initializer_list<point> &dots, int n);
     virtual ~Figure() noexcept;
 
     const std::string getTag() const;
@@ -19,7 +15,7 @@ public:
     const point* getDots() const;
 
     operator double();
-    Figure& operator=(const Figure& other);
+    Figure& operator=(Figure& other);
     Figure& operator=(Figure&& other) noexcept;
     bool operator==(const Figure& other) const;
 
@@ -27,13 +23,19 @@ public:
     friend std::istream& operator>>(std::istream &stream, Figure& Figure);
 
 protected:
+    Figure();
+    Figure(int n);
+    Figure(point &center, int n);
+    Figure(const std::initializer_list<point> &dots, int n);
+
+
     virtual void check() const;
     virtual bool equals(const Figure& other) const;
     virtual double calcArea() const;
 
     bool trueFigCheck(int n) const;
     bool dbEqual(double a, double b) const;
-
+    void refreshCenter();
     void constructFig(point &dot, int n);
 
     double distance(point a, point b) const;
@@ -41,7 +43,7 @@ protected:
 
     std::string tag = "NULL";
     point *arr;
-
+    point _center;
 private:
     size_t _size = 2;
 };

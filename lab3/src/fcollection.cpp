@@ -66,26 +66,40 @@ Figure* FigureCollection::get(int index) {
 void FigureCollection::remove(int index) {
     if (index < 0 || index >= size) {
         throw std::underflow_error("Index out of range");
-        return;
     }
 
-    figures[index] = NULL; // Освобождаем память, выделенную под фигуру по индексу
-    for (int i = index; i < size - 1; i++) {
-        figures[i] = figures[i + 1];
+    Figure** newCollection = new Figure*[capacity - 1];
+    for (size_t i = 0, j = 0; i < size; ++i)
+    {
+        if (i != index) {
+            newCollection[j++] = this->figures[i];
+        } else {
+            delete this->figures[i];
+        }
     }
+    
+    delete[] this->figures;
     size--;
+    capacity--;
+    this->figures = newCollection;
 
-    if (size < capacity / 2 && size > 0) {
-        // Если размер стал значительно меньше, чем вместимость, можно уменьшить capacity.
-        // В данном случае, я уменьшу capacity до ближайшей меньшей степени двойки.
-        while (capacity / 2 >= size) {
-            capacity /= 2;
-        }
-        Figure** newCollection = new Figure*[capacity];
-        for (int i = 0; i < size; i++) {
-            newCollection[i] = figures[i];
-        }
-        delete[] figures;
-        figures = newCollection;
-    }
+    // figures[index] = NULL; // Освобождаем память, выделенную под фигуру по индексу
+    // for (int i = index; i < size - 1; i++) {
+    //     figures[i] = figures[i + 1];
+    // }
+    // size--;
+
+    // if (size < capacity / 2 && size > 0) {
+    //     // Если размер стал значительно меньше, чем вместимость, можно уменьшить capacity.
+    //     // В данном случае, я уменьшу capacity до ближайшей меньшей степени двойки.
+    //     while (capacity / 2 >= size) {
+    //         capacity /= 2;
+    //     }
+    //     Figure** newCollection = new Figure*[capacity];
+    //     for (int i = 0; i < size; i++) {
+    //         newCollection[i] = figures[i];
+    //     }
+    //     delete[] figures;
+    //     figures = newCollection;
+    // }
 }

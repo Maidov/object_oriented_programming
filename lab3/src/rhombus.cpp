@@ -6,10 +6,10 @@ Rhombus::Rhombus() : Figure(4)
     tag = "RHOMBUS";
 };
 
-Rhombus::Rhombus(point x, point y, double multiply) : Figure(x, 4)
+Rhombus::Rhombus(point cen, point dot, double multiply) : Figure(cen, 4)
 {
     tag = "RHOMBUS";
-    constructFig(y, multiply);
+    constructFig(dot, multiply);
     check();
 }
 
@@ -21,10 +21,9 @@ Rhombus::Rhombus(const std::initializer_list<point> &dots) : Figure(dots, 4)
 
 void Rhombus::constructFig(point &dot, double multiply)
 {
-    point center = this->getGCenter();
     double angle = degrE2Rad(360/4);
-    double alfa = atan((dot.y - center.y)/(dot.x - center.x));
-    double r = distance(center, dot);
+    double alfa = atan((dot.y - _center.y)/(dot.x - _center.x));
+    double r = distance(_center, dot);
     double multi = 1;
 
     if ((1 < multiply) || (multiply < 0)) throw std::underflow_error("Multiply must be (0 < multiply < 1)");
@@ -36,20 +35,21 @@ void Rhombus::constructFig(point &dot, double multiply)
         } else {
             multi = multiply;
         }
-        arr[i].x = center.x + (r * cos(alfa + (angle * i)) * multi);   
-        arr[i].y = center.y + (r * sin(alfa + (angle * i)) * multi);
+        arr[i].x = _center.x + (r * cos(alfa + (angle * i)) * multi);   
+        arr[i].y = _center.y + (r * sin(alfa + (angle * i)) * multi);
     }                                   
 }
 
 void Rhombus::check() const
 {
+    if ((this->calcArea() == 0)) throw std::underflow_error("This is not a rhombus");
     point center = this->getGCenter();
     int n = this->size();
     double setDis = distance(arr[0], arr[n - 1]);
     for (size_t i = 0; i < (n - 1); i++)
     {
         double dis = distance(arr[i], arr[i+1]);
-        if (!(dbEqual(dis, setDis))) throw std::underflow_error("This is not a rhombus");;
+        if (!(dbEqual(dis, setDis))) throw std::underflow_error("This is not a rhombus");
     }
 }
 
