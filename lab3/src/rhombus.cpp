@@ -58,6 +58,13 @@ double Rhombus::calcArea() const
     return distance(this->arr[1], this->arr[3]) * distance(this->arr[0], this->arr[2]) * 0.5;
 }
 
+Rhombus& Rhombus::operator=(Rhombus& other)
+{
+    if (this != &other) {
+        Figure::operator=(other);
+    }
+    return *this;
+}
 
 Rhombus& Rhombus::operator=(Rhombus&& other)
 {

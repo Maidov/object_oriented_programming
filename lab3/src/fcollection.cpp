@@ -73,8 +73,6 @@ void FigureCollection::remove(int index) {
     {
         if (i != index) {
             newCollection[j++] = this->figures[i];
-        } else {
-            delete this->figures[i];
         }
     }
     

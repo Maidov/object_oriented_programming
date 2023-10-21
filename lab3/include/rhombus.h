@@ -10,6 +10,7 @@ public:
     Rhombus(point x, point y,  double multiply);
     Rhombus(const std::initializer_list<point> &dots);
     Rhombus& operator=(Rhombus&& other);
+    Rhombus& operator=(Rhombus& other);
     
 protected:
     double calcArea() const override;

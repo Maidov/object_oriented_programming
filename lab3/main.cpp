@@ -28,7 +28,6 @@ int main(){
         // a5 = A.getDots()[5];
         // a5.x = A.getDots()[5].x;
         Rhombus B({a0, a1, a2, a3});
-
         cout << dbEqual(0, distance(B.getGCenter(), A.getGCenter()));
 
     } catch(std::exception &ex){
