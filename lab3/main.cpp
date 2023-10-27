@@ -12,7 +12,6 @@ using namespace std;
 
 int main(){
 
-    try {
         point center1{0, 0}, center2{3.4, 6.7}, center3{123, 456};
         point dot1{1, 1}, dot2{9.8, 6.5}, dot3{987, 321};
         Pentagon P(center1, dot1);
@@ -62,11 +61,5 @@ int main(){
         cout << "\n";
         cout << FC;
 
-
-
-    } catch(std::exception &ex){
-        cerr << "exception: " << ex.what() << std::endl;
-    }
-
-    return 1;
+    return 0;
 }
