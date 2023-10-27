@@ -60,7 +60,7 @@ void Figure::refreshCenter()
         center.y += arr[i].y;
     }
     center.x /= _size;
-    center.x /= _size;
+    center.y /= _size;
     _center = center;
 }
 
@@ -192,7 +192,7 @@ std::istream& operator>>(std::istream& in, Figure& _this)
         in >> value;
         _this.arr[i].y = value;
     }
-
+    _this.refreshCenter();
     _this.check();
     return in;
 }
