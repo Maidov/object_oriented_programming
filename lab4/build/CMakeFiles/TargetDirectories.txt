@@ -1,0 +1,6 @@
+/home/master/Desktop/labs-oop/lab4/build/CMakeFiles/lab4_lib.dir
+/home/master/Desktop/labs-oop/lab4/build/CMakeFiles/lab4.dir
+/home/master/Desktop/labs-oop/lab4/build/CMakeFiles/tests.dir
+/home/master/Desktop/labs-oop/lab4/build/CMakeFiles/test.dir
+/home/master/Desktop/labs-oop/lab4/build/CMakeFiles/edit_cache.dir
+/home/master/Desktop/labs-oop/lab4/build/CMakeFiles/rebuild_cache.dir

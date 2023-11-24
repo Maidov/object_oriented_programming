@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblab4_lib.a CMakeFiles/lab4_lib.dir/src/main.cpp.o CMakeFiles/lab4_lib.dir/src/test1.cpp.o
+/usr/bin/ranlib liblab4_lib.a
