@@ -15,9 +15,9 @@ include_directories(${INCLUDE_DIR})
 add_executable(${CMAKE_PROJECT_NAME}.exe main.cpp)
 
 
-# enable_testing()
+enable_testing()
 
-# add_executable(tests_lab.exe ${TEST_DIR}/test.cpp)
-# target_link_libraries(tests_lab.exe ${GTEST_LIBRARIES})
+add_executable(tests_lab.exe ${TEST_DIR}/test.cpp)
+target_link_libraries(tests_lab.exe ${GTEST_LIBRARIES})
 
-# add_test(NAME BASIC COMMAND tests_lab.exe)
+add_test(NAME BASIC COMMAND tests_lab.exe)
