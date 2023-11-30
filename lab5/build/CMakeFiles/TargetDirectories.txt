@@ -1,3 +1,0 @@
-/home/master/Desktop/5/build/CMakeFiles/lab_4.exe.dir
-/home/master/Desktop/5/build/CMakeFiles/edit_cache.dir
-/home/master/Desktop/5/build/CMakeFiles/rebuild_cache.dir

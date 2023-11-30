@@ -4,6 +4,7 @@
 #include "allocator.h"
 
 
+
 template <typename T, typename Allocator = PoolAllocator<T>>
 class Vector {
 public:
@@ -64,7 +65,7 @@ public:
         bool operator==(const ConstIterator& other) const;
         bool operator!=(const ConstIterator& other) const;
 
-        T& operator*() const;
+        const T& operator*() const;
         T* operator->() const;
 
         ConstIterator& operator++();
@@ -90,6 +91,10 @@ private:
     void v_reserve(size_type new_capacity);
 
 };
+
+
+
+
 
 template <typename T, typename Allocator>
 void Vector<T, Allocator>::remove(int index) {
@@ -210,7 +215,7 @@ bool Vector<T, Allocator>::ConstIterator::operator!=(const ConstIterator& other)
 }
 
 template <typename T, typename Allocator>
-T& Vector<T, Allocator>::ConstIterator::operator*() const{
+const T& Vector<T, Allocator>::ConstIterator::operator*() const{
     return *item;
 }
 
