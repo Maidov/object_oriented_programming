@@ -39,8 +39,6 @@ class PoolAllocator {
         void destroy(pointer p) {
             p->~T();
         }
-
-        void print();
 };
 
 template <typename T>
@@ -76,9 +74,8 @@ T* PoolAllocator<T>::allocate(){
 
 template <typename T>
 T* PoolAllocator<T>::allocate(size_t n){
-    if (_free.empty()) {
-        throw std::bad_alloc();
-    }
+    if (_free.empty()) { throw std::bad_alloc(); }
+    if (_free.size < n) { throw std::bad_alloc(); }
     for (size_t i = 0; i < n - 1; ++i) {
         _free.pop_back();
     }
