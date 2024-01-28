@@ -134,9 +134,6 @@ void Battlefield::battle_old(size_t rounds, double distance) {
     this->notify(nullptr, nullptr, Commands::BATTLE_END);
 }
 
-
-
-
 void ObserverBattlefieldOstream::battleStart(const std::pair<int,int> &size, const std::list<std::shared_ptr<NPC>> npcList) {
     std::cout << std::endl << "-------- Battle started --------" << std::endl;
     std::cout << "There are " << npcList.size() << " fighters." << std::endl;
@@ -368,7 +365,7 @@ void Battlefield::battle() {
                 std::this_thread::sleep_until(awake);
                 {
                     using std::chrono::operator""ms;
-                    if (this->now() > start + 5000ms){
+                    if (this->now() > start + FIGHT_DURATION){
                         state["finish"] = true;
                     }
                 }
