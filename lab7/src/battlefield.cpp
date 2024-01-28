@@ -57,14 +57,23 @@ void Battlefield::fillRandomly(size_t orcs, size_t druids, size_t squirrels) {
     }
 }
 
-void Battlefield::notify(std::shared_ptr<NPC> attacker, std::shared_ptr<NPC> defender, int cmd) {
+void Battlefield::notify(std::shared_ptr<NPC> attacker, std::shared_ptr<NPC> defender, int cmd, ...) {
+    int aRoll=-1, dRoll=-1;
+    // Обработка неопределенного количества целочисленных аргументов
+    va_list args;
+    va_start(args, cmd);
+    // Извлечение двух целочисленных аргументов
+    aRoll = va_arg(args, int);
+    dRoll = va_arg(args, int);
+    va_end(args);
+    
     switch (cmd) {
-        case Commands::LOSE:
+        case Commands::FAIL:
             for (auto obs: _observers) {
                 obs->fight(attacker, defender, cmd);
             }
             break;
-        case Commands::WIN:
+        case Commands::KILL:
             for (auto obs: _observers) {
                 obs->fight(attacker, defender, cmd);
             }
@@ -77,6 +86,11 @@ void Battlefield::notify(std::shared_ptr<NPC> attacker, std::shared_ptr<NPC> def
         case Commands::BATTLE_END:
             for (auto obs: _observers) {
                 obs->battleEnd(this->_size, this->_npcList);
+            }
+            break;
+        case Commands::ROLL:
+            for (auto obs: _observers) {
+                obs->roll(attacker, aRoll, defender, dRoll);
             }
             break;
         default:
@@ -198,6 +212,13 @@ void ObserverBattlefieldFile::battleEnd(const std::pair<int,int> &size, const st
 
 // NEW FUNCTIONALITY
 
+
+void Observer::roll(const std::shared_ptr<NPC> attacker, const int aRoll, const std::shared_ptr<NPC>& defender, const int dRoll){
+    std::cout << attacker->name() << ":--->  [" << aRoll << "vs" << dRoll << "]  |---:" << defender->name();
+}
+
+
+
 int Battlefield::holyRand() {
     // Используем генератор случайных чисел и распределение
     static std::random_device rd;  // Инициализация генератора случайных чисел
@@ -212,17 +233,6 @@ std::chrono::_V2::steady_clock::time_point Battlefield::awake_time()
 {
     using std::chrono::operator""ms;
     return now() + 1000ms;
-}
-
-bool compareNPCs(const std::shared_ptr<NPC>& first, const std::shared_ptr<NPC>& second) {
-    // Сначала сравниваем по y
-    if (first->coords().y < second->coords().y)
-        return true;
-    else if (first->coords().y == second->coords().y)
-        // Если y равны, сравниваем по x
-        return first->coords().x < second->coords().x;
-    else
-        return false;
 }
 
 std::ostream &operator << (std::ostream &os, Battlefield &btf) {
@@ -263,7 +273,7 @@ std::ostream &operator << (std::ostream &os, Battlefield &btf) {
                     icon = 'D';
                     break;
                 case TypeNPC::ORC:
-                    icon = 'B';
+                    icon = 'O';
                     break;
                 case TypeNPC::SQUIRREL:
                     icon = 'S';
@@ -272,20 +282,24 @@ std::ostream &operator << (std::ostream &os, Battlefield &btf) {
                     break;
                 }
             } else {
-                const TypeNPC npcType = npc->type();
-                switch (npcType)
-                {
-                case TypeNPC::DRUID:
-                    icon = 'd';
-                    break;
-                case TypeNPC::ORC:
-                    icon = 'b';
-                    break;
-                case TypeNPC::SQUIRREL:
-                    icon = 's';
-                    break;
-                default:
-                    break;
+                if (DISPLAY_DEAD){
+                    const TypeNPC npcType = npc->type();
+                    switch (npcType)
+                    {
+                    case TypeNPC::DRUID:
+                        icon = 'd';
+                        break;
+                    case TypeNPC::ORC:
+                        icon = 'b';
+                        break;
+                    case TypeNPC::SQUIRREL:
+                        icon = 's';
+                        break;
+                    default:
+                        break;
+                    }
+                } else {
+                    icon = '.';
                 }
             }
             field[npc->coords().y][npc->coords().x] = icon;
@@ -306,6 +320,7 @@ std::ostream &operator << (std::ostream &os, Battlefield &btf) {
 
 
 void Battlefield::battle() {
+    std::cout << *this;
     this->notify(nullptr, nullptr, Commands::BATTLE_START);
     std::map<std::string, bool> state{{"moved", false}, {"fighted", false}, {"done", false}, {"finish", false}};
     std::chrono::_V2::steady_clock::time_point awake = awake_time();
@@ -373,10 +388,14 @@ void Battlefield::battle() {
 
                 for (auto &&d : _duelsList)
                 {
-                    int defence = d.defender->holyRand() % DICE_SIZE;
-                    int attack = d.attacker->holyRand() % DICE_SIZE;
+                    int defence = (d.defender->holyRand() % DICE_SIZE) + 1;
+                    int attack = (d.attacker->holyRand() % DICE_SIZE) + 1;
+                    if (INFO) notify(d.attacker, d.defender, Commands::ROLL, attack, defence);
                     if (attack > defence){
+                        if (INFO) notify(d.attacker, d.defender, Commands::KILL);
                         d.attacker->accept(d.defender);
+                    } else {
+                        if (INFO) notify(d.attacker, d.defender, Commands::FAIL);
                     }
                 }
 
@@ -435,5 +454,6 @@ void Battlefield::battle() {
     auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now() - start_time);
     std::cout << elapsed_ms.count() << "ms";
     this->notify(nullptr, nullptr, Commands::BATTLE_END);
+    std::cout << *this;
     
 }
