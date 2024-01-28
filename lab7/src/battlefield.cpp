@@ -59,10 +59,8 @@ void Battlefield::fillRandomly(size_t orcs, size_t druids, size_t squirrels) {
 
 void Battlefield::notify(std::shared_ptr<NPC> attacker, std::shared_ptr<NPC> defender, int cmd, ...) {
     int aRoll=-1, dRoll=-1;
-    // Обработка неопределенного количества целочисленных аргументов
     va_list args;
     va_start(args, cmd);
-    // Извлечение двух целочисленных аргументов
     aRoll = va_arg(args, int);
     dRoll = va_arg(args, int);
     va_end(args);
@@ -236,34 +234,9 @@ std::chrono::_V2::steady_clock::time_point Battlefield::awake_time()
 }
 
 std::ostream &operator << (std::ostream &os, Battlefield &btf) {
-    // Old version
-
-    // os << "This is a battlefield" << std::endl;
-    // os << "There are " << btf._npcList.size() << " fighters." << std::endl;
-    // for (auto npc: btf._npcList) {
-    //     os << *npc;
-    // }
-
-    // zero-matrix processing failure
-    
-    // std::vector<std::shared_ptr<NPC>> outList;
-    // for (auto &&npc : btf._npcList)
-    // {
-    //     outList.push_back(npc);
-    // }
-    // std::sort(outList.begin(), outList.end(), compareNPCs);
-    // for (auto &&npc : outList)
-    // {
-    //     point coords
-    //     os << npc->coords() << "\n";
-    // }
-    // os << "\n";
-    
     std::vector<std::vector<char>> field(BTF_SIZE, std::vector<char>(BTF_SIZE, '.'));
     char icon = '.';
-    // Отмечаем точки на поле
     for (const auto& npc : btf._npcList) {
-        // Убеждаемся, что координаты точки находятся в пределах поля
         if ((npc->coords().x >= 0) && (npc->coords().x < BTF_SIZE) && (npc->coords().y >= 0) && (npc->coords().y < BTF_SIZE)) {
             if (npc->is_alive()){
                 const TypeNPC npcType = npc->type();
@@ -306,7 +279,6 @@ std::ostream &operator << (std::ostream &os, Battlefield &btf) {
         }
     }
 
-    // Рисуем поле
     for (int i = 0; i < BTF_SIZE; ++i) {
         for (int j = 0; j < BTF_SIZE; ++j) {
             os << field[i][j];
@@ -326,35 +298,22 @@ void Battlefield::battle() {
     std::chrono::_V2::steady_clock::time_point awake = awake_time();
     auto start_time = std::chrono::steady_clock::now();
 
-    // std::chrono::_V2::steady_clock::time_point now();
-    // std::chrono::_V2::steady_clock::time_point awake_time();
-    // std::vector<checker> v;
-    // std::vector<checker> &v, // debug
     auto lambdaMove = [this](std::map<std::string, bool> &state, std::chrono::_V2::steady_clock::time_point &awake)
     {
         while (!state["finish"]){
             std::lock_guard<std::mutex> lock(Mutex);
             if ((state["moved"] == false) && (state["finish"] == false)){
-                // auto old = state; // debug
                 awake = this->awake_time();
 
-                // CODE: Move all alive npcs randomly
-                // -- Map size restriction checker
-                // Form list of pairs of npcs if they in kill zone
-
-                // Move NPCs
                 for (auto npc: _npcList) {
                     if (npc->is_alive()) {
-                        // Define move range
-                        int moveX = -npc->move_range() + (npc->holyRand() % (2 * npc->move_range())); // Random num from [-move, +move]
+                        int moveX = -npc->move_range() + (npc->holyRand() % (2 * npc->move_range()));
                         int remaining_movement = npc->move_range() - abs(moveX);
                         int moveY = (-1 + (npc->holyRand() % 2)*2) * remaining_movement;
-                        // Apply movement
                         npc->move(moveX, moveY);
                     }
                 }
 
-                // Form duels for fight
                 for (auto attacker : _npcList) {
                     bool success1;
                     for (auto defender : _npcList) {
@@ -367,25 +326,17 @@ void Battlefield::battle() {
                     }
                 }
 
-
-
                 state["moved"] = true;
                 state["done"] = false;
-                // checker new_check{"move", old, state}; // debug
-                // v.push_back(new_check); // debug
             }
         }
     };
-    // std::vector<checker> &v, // debug
+
     auto lambdaFight = [this](std::map<std::string, bool> &state)
     {
         while (!state["finish"]){
             std::lock_guard<std::mutex> lock(Mutex);
             if ((state["moved"] == true) && (state["fighted"] == false) && (state["finish"] == false)){
-                // auto old = state; // debug
-
-                // CODE: Fight for npc in kill range | change npc's status
-
                 for (auto &&d : _duelsList)
                 {
                     int defence = (d.defender->holyRand() % DICE_SIZE) + 1;
@@ -401,20 +352,14 @@ void Battlefield::battle() {
 
 
                 state["fighted"] = true;
-                // checker new_check{"fight", old, state}; // debug
-                // v.push_back(new_check); // debug
             }
         }
     };
-    // std::vector<checker> &v, // debug
     auto lambdaMap = [this](std::map<std::string, bool> &state, std::chrono::time_point<std::chrono::_V2::steady_clock, std::chrono::_V2::steady_clock::duration> &awake, std::chrono::time_point<std::chrono::_V2::steady_clock, std::chrono::_V2::steady_clock::duration> start)
     {
         while (!state["finish"]){
             std::lock_guard<std::mutex> lock(Mutex);
             if ((state["moved"] == true) && (state["fighted"] == true) && (state["done"] == false) && (state["finish"] == false)){
-                // auto old = state; // debug
-
-                // CODE: Print map | Dead not displayed
                 std::cout << *this << "\n";
 
                 state["fighted"] = false;
@@ -427,8 +372,6 @@ void Battlefield::battle() {
                         state["finish"] = true;
                     }
                 }
-                // checker new_check{"print_map", old, state};  // debug
-                // v.push_back(new_check);  // debug
             }
         }
     };
@@ -440,16 +383,6 @@ void Battlefield::battle() {
     moveTh.join();
     fightTh.join();
     mainTh.join();
-
-
-    // debug
-    // for (auto &&i : v)
-    // {
-    //     std::cout << i.phase << "\n";
-    //     std::cout << ">--   m:" << i.old_state["moved"] << " f:" << i.old_state["fighted"] << " p:" << i.old_state["done"] << " X:" << i.old_state["finish"] <<"\n";
-    //     std::cout << "<--   m:" << i.save_state["moved"] << " f:" << i.save_state["fighted"] << " p:" << i.save_state["done"]  << " X:" << i.save_state["finish"] << "\n\n";
-    // }
-
     
     auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now() - start_time);
     std::cout << elapsed_ms.count() << "ms";

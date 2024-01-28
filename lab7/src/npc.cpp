@@ -95,8 +95,6 @@ int NPC::attack_range() const{
 }
 
 void NPC::move(const int& moveX, const int& moveY) {
-    //std::lock_guard<std::mutex> lck(mtx); // Old code | Mutex will be proceed by upper class (battlefield)
-    // std::cout << moveX << " -- " << moveY << "\n"; // debug
     if ((_coords.x + moveX >= 0) && (_coords.x + moveX <= BTF_SIZE)) {
         _coords.x += moveX;
     }
