@@ -95,11 +95,11 @@ int NPC::attack_range() const{
 }
 
 void NPC::move(const int& moveX, const int& moveY) {
-    if ((_coords.x + moveX >= 0) && (_coords.x + moveX <= BTF_SIZE)) {
+    if ((_coords.x + moveX >= 0) && (_coords.x + moveX < BTF_SIZE)) {
         _coords.x += moveX;
     }
 
-    if ((_coords.y + moveY >= 0) && (_coords.y + moveY <= BTF_SIZE)) {
+    if ((_coords.y + moveY >= 0) && (_coords.y + moveY < BTF_SIZE)) {
         _coords.y += moveY;
     }
 }

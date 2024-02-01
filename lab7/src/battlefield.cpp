@@ -275,10 +275,12 @@ std::ostream &operator << (std::ostream &os, Battlefield &btf) {
             field[npc->coords().y][npc->coords().x] = icon;
         }
     }
-
-    for (int i = 0; i < BTF_SIZE; ++i) {
-        for (int j = 0; j < BTF_SIZE; ++j) {
-            os << field[i][j];
+    if (MAP){
+        for (int i = 0; i < BTF_SIZE; ++i) {
+            for (int j = 0; j < BTF_SIZE; ++j) {
+                os << field[i][j];
+            }
+            os << '\n';
         }
         os << '\n';
     }
@@ -357,7 +359,7 @@ void Battlefield::battle() {
         while (!state["finish"]){
             std::lock_guard<std::mutex> lock(Mutex);
             if ((state["moved"] == true) && (state["fighted"] == true) && (state["done"] == false) && (state["finish"] == false)){
-                std::cout << *this << "\n";
+                std::cout << *this;
 
                 state["fighted"] = false;
                 state["moved"] = false;
